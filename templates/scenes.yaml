@@ -1,0 +1,35 @@
+video:
+  width: 1920
+  height: 1080
+  fps: 30
+  voice: narrator_male
+  transition: crossfade
+  subtitle:
+    position: bottom
+    style:
+      fill: "#FFFFFF"
+      stroke: "#000000"
+      padding: 32
+scenes:
+  # (ここにシーンを追加します)
+  - id: E-1
+    image: ending.jpg
+    teletext:
+      text: "エンディング"
+      position: top_left
+      style:
+        fill: "#FFE066"
+        stroke: "#222222"
+    voiceover: |
+      ご視聴ありがとうございます。この動画が役に立ったと思ったら、
+      高評価とチャンネル登録をよろしくお願いします。
+      それでは、また次の動画でお会いしましょう。
+    transition: cut
+    voice_override:
+      voice: narrator_male
+      speed: 1.0
+options:
+  voice_cache_dir: .cache/voice
+  subtitle_format: burn
+  keep_temp: false
+  workers: 1
