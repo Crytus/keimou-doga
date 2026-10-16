@@ -2,7 +2,7 @@
 name: keimou-doga
 description: Create awareness videos from research to structured files.
 version: 1
-author: hermes-agent
+author: Crytus
 license: MIT
 metadata:
   hermes:
