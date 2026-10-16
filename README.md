@@ -43,7 +43,7 @@ keimou-doga/
 スキルを読み込むエージェントのスキルディレクトリ（例: `.agent/skills/` や `~/.claude/skills/`）にクローンしてください。
 
 ```bash
-git clone https://github.com/<ユーザー名>/keimou-doga.git .agent/skills/keimou-doga
+git clone https://github.com/Crytus/keimou-doga.git .agent/skills/keimou-doga
 ```
 
 ## 使い方
