@@ -2,7 +2,7 @@
 name: keimou-doga
 description: Create awareness videos from research to structured files.
 version: 1
-author: Crytus
+author: hermes-agent
 license: MIT
 metadata:
   hermes:
@@ -29,6 +29,9 @@ Procedural memory for creating educational/awareness videos: research-driven con
 2. Extract key facts from top results via `web_extract` on the most relevant URLs.
 3. Use these facts to ground the scenario content — cite statistics, include official sources, and structure chapters around verified information.
 4. Append a reference section at the end of the final markdown file with title + URL of every source used.
+5. If the user asks only to research a topic, deliver sourced research notes plus `abstract.md` and `detail.md`; keep the five-chapter plan as a proposal, and do not imply that a complete script, scene CSV/YAML, or rendered video was requested or produced.
+6. For health claims, distinguish acute test performance, training-related cognitive change, and long-term disease incidence. Keep observational relative risks separate from causal intervention effects; never turn a standardised effect size into a percentage improvement. Include important null trials and relevant population/comparator limitations.
+7. Check the current edition of official guidelines and any linked corrections before using an older review's counts or conclusions. Read the correction itself: clarifications of sample overlap or reporting may leave effect estimates unchanged.
 
 ### Step 1 — Plan structure (5 chapters)
 
@@ -50,7 +53,7 @@ Each scene includes:
 - Scene number and title
 - Chapter assignment
 - Narration text (ナレーション)
-- Image prompt (画像生成プロンプト)
+- Image prompt (画像生成プロンプト): follow the Qwen-Image-2.1 rules in Step 4; the markdown and CSV must use the same prompt for each scene.
 - BGM suggestion
 
 Chapter 5 ends with recovery/hope and the final takeaways; keep the closing thanks and subscription message exclusively in the template's separate fixed `E-1` scene, so the ending is not duplicated.
@@ -67,7 +70,14 @@ Columns: `scene_num,scene_name,seed,file_name,positive_prompt`
 - `scene_num` format: `<chapter>-<scene>` (e.g., 1-1, 3-2)
 - `seed`: increment by ~100 per scene for diversity while maintaining consistency
 - `file_name`: `<prefix>_<scene_num>_<desc>.ext` (kebab-case)
-- **Image prompt rules**: no text/captions, no proper nouns (studio names, character names), no anime/artistic style references. Use `photorealistic style` as base modifier.
+- **Image prompt rules for Qwen-Image-2.1** (apply to every scene's markdown and CSV prompt):
+  1. Write one coherent English natural-language description, not comma-separated Stable Diffusion tags, weighted tokens such as `(subject:1.5)`, or generic quality boosters (`masterpiece`, `8K`). Lead with the concrete subject and action; then describe the setting, visual metaphor, framing/composition, light, and photorealistic appearance. Include only details that affect what is visible; avoid contradictions and excessive length.
+  2. **People: explicitly identify every depicted person/group as Japanese** (e.g. `a Japanese woman`, `Japanese older adults`) rather than assuming ethnicity from Japanese clothing or scenery. **Place: explicitly set every depicted location in Japan** (e.g. `in a Japanese home in Japan`, `at a clinic in Japan`). If the scene is a placeless close-up, anatomy diagram, or abstract metaphor with no person or location, do not invent a person or setting solely to satisfy these clauses; never leave a *depicted* person or location with an unspecified nationality/country.
+  3. Ground Japanese settings in concrete, ordinary environmental details where useful (housing, clinic, streets, food), without caricature or stock stereotypes. Keep age, clothing, and recurring characters consistent across scenes where the script requires it.
+  4. Keep imagery free of visible text, captions, letters, numerals, signs, and logos; describe a clean composition with no readable text when needed. Do not name studios, artists, or fictional characters, and do not request an anime style. Use a photorealistic look unless the scene's visual metaphor requires a clearly described alternative.
+  5. Keep seed, output filename, aspect ratio, resolution, and other generation settings in their own workflow fields; do not mix parameter syntax or `16:9`/`4K` into `positive_prompt`. Put on-screen titles in YAML `teletext`, not the image prompt.
+  6. Example: `A Japanese older woman in her kitchen in Japan pauses with a glass of water in her hand, conveying a moment of concern about dehydration. Show a medium shot with the glass in sharp focus, natural morning window light, and realistic skin and household textures. No visible text, numbers, signs, or logos.`
+- Before exporting, inspect every prompt for explicit `Japanese` nationality when a person appears and explicit `Japan` location when a setting appears; verify the markdown and CSV prompts agree by scene ID. Do not add the words mechanically to scenes that genuinely have neither.
 
 ### Step 5 — Write video tool YAML
 
@@ -90,10 +100,7 @@ Generated scene format (indent exactly like the existing ending scene):
         stroke: "#222222"
     voiceover: |
       {narration text}
-    transition: cut
-    voice_override:
-      voice: narrator_male
-      speed: 1.0
+
 ```
 
 **YAML indentation requirements:**
@@ -122,7 +129,7 @@ Generated scene format (indent exactly like the existing ending scene):
 - **CSV consumer compatibility** — use UTF-8 with BOM for CSV intended for Windows spreadsheet applications, and read it with `utf-8-sig` during verification. Keep IDs, titles, paths, narration, and order aligned across every row.
 - **YAML parser availability** — check the actual execution interpreter for PyYAML or another YAML parser; availability differs between environments. Preserve the template's formatting when writing and parse the result for verification.
 - **Separate ending scene** — keep the template's fixed final scene `E-1` exactly once, after all inserted scenes; do not add a second closing scene.
-- **Image prompt rules**: EXCLUDE text, letters, numbers, signs, logos from visual descriptions. Never include artist names (Studio Ghibli, Makoto Shinkai, Disney). Use descriptive style terms instead.
+- **Image prompt consistency** — verify the Japanese-person/Japan-setting and Qwen-Image-2.1 natural-language rules in Step 4 for each scene; do not reintroduce text/logos, artist references, or model-specific parameter syntax while editing prompts.
 
 ## Output Conventions
 
